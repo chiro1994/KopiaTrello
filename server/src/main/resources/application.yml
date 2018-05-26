@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: CTI-multimedia-system
+  datasource:
+    url: jdbc:mysql://localhost:3306/TEST_DB?useSSL=false&useUnicode=yes&characterEncoding=UTF-8
+    username: root
+    password:
+    testWhileIdle: true
+    validationQuery: SELECT 1
+  thymeleaf:
+    cache: false
+  http:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialec: org.hibernate.dialect.MySQL5Dialect
+
+security:
+  user: user
+  password: password
+
+web-socket:
+  destinationPrefixes: /topic
+  prefixes: /app
+  paths: /cti-websocket
+
+logging:
+  level:
+    org:
+      springframework:
+        security: INFO
+
+server:
+  port: 8091
+
+flyway:
+  locations: db/migration
+
