@@ -27,6 +27,10 @@ import java.util.List;
         return taskRepository.findByAuthorId(authorId);
     }
 
+    public void setPositionTask(int taskTable, long id) {
+        taskRepository.setPositionTask(taskTable, id);
+    }
+
     public TaskModel updateTask(TaskModel taskModel) {
         return taskRepository.save(taskModel);
     }

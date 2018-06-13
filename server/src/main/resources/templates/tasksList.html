@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tasks List</title>
+
+    <div th:replace="fragments/header :: header-css"/>
+<style>
+    .gu-mirror{position:fixed!important;margin:0!important;z-index:9999!important}.gu-hide{display:none!important}.gu-unselectable{-webkit-user-select:none!important;-moz-user-select:none!important;-ms-user-select:none!important;user-select:none!important}.gu-transit{opacity:.2;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";filter:alpha(opacity=20)}.gu-mirror{opacity:.8;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";filter:alpha(opacity=80)}
+    .field {
+        border: 2px solid #f3f3f3;
+        border-radius: 5px;
+        margin: 10px;
+        width: 200px;
+        padding: 10px;
+        cursor: move;
+    }
+</style>
+</head>
+<body>
+
+
+<div th:replace="fragments/header :: header"/>
+<br/><br/>
+<div>
+    <form th:action="@{/addTask}" method="POST">
+            <input type="text" name="descriptions" id="descriptions" placeholder="Nazwa zadania" required="true"/>
+            <input type="submit" value="Dodaj zadanie"/>
+    </form>
+</div>
+<br/>
+<div class="wrapper">
+    <div>
+        <fieldset class="container col-lg-4" id="left" th:attr="data-id=1">
+            <legend>Do zrobienia</legend>
+            <div class="field" th:each ="task : ${tasks}" th:if="${task.getTaskTable()==1}" th:text="${task.getDescriptions()}" th:attr="data-id=${task.getId()}"></div>
+        </fieldset>
+    </div>
+    <div>
+        <fieldset class="container col-lg-4" id="right" th:attr="data-id=2">
+            <legend>W trakcie</legend>
+            <div class="field" th:each ="task : ${tasks}" th:if="${task.getTaskTable()==2}"  th:text="${task.getDescriptions()}" th:attr="data-id=${task.getId()}"></div>
+        </fieldset>
+    </div>
+    <div>
+        <fieldset class="container col-lg-4" id="center" th:attr="data-id=3">
+            <legend>Zrobione</legend>
+            <div class="field" th:each ="task : ${tasks}" th:if="${task.getTaskTable()==3}"  th:text="${task.getDescriptions()}" th:attr="data-id=${task.getId()}"></div>
+        </fieldset>
+    </div>
+</div>
+<script  src="js/index.js"></script>
+<script th:inline="javascript">
+    var containers = [document.getElementById('left'), document.getElementById('right'), document.getElementById('center')];
+    dragula(containers, {removeOnSpill: true})
+        .on('drop', function (el, container) {
+            var id = el.getAttribute("data-id");
+            var taskTable = container.getAttribute("data-id");
+            var url = "/tasks/update/" + id + "/" + taskTable;
+            $
+                .ajax({
+                    type: "POST",
+                    url: url,
+                    dataType: 'json'
+                });
+    }).on('remove', function(el) {
+        if (window.confirm("Czy chcesz usunąć wybrane zadanie?") === false) {
+            window.location.reload();
+        } else {
+            var taskId = el.getAttribute("data-id");
+            var url = "/deleteTask";
+            $
+                .ajax({
+                    type: "POST",
+                    url: url,
+                    dataType: 'json',
+                    data: {
+                        taskId: taskId
+                    }});
+        }});
+</script>
+</body>
+</html>
