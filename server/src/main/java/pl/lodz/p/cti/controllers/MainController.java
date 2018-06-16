@@ -47,6 +47,33 @@ import java.util.List;
         return "/register";
     }
 
+    @RequestMapping("/addTask") public String addTask(
+            @RequestParam("descriptions") String descriptions, HttpServletResponse response) {
+
+        try {
+            TaskModel taskModel = TaskModel.
+                    builder().authorId(1L).descriptions(descriptions).taskTable(1).startDate(0L)
+                    .endDate(0L).build();
+
+            taskService.save(taskModel);
+            response.setStatus(HttpServletResponse.SC_OK);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+        return "redirect:/tasksList";
+    }
+
+    @GetMapping("/tasksList")
+    public String tasksList(Model model) {
+        model.addAttribute("tasks", taskService.findAllTask());
+        return "/tasksList";
+    }
+
+    @RequestMapping(value = "/tasks/update/{id}/{taskTable}", method = RequestMethod.POST)
+    public void updateTaskStatus(@PathVariable("id") long id, @PathVariable("taskTable") int taskTable){
+        taskService.setPositionTask(taskTable, id);
+    }
+
     @RequestMapping("/saveTask") public @ResponseBody void saveTask(
             @RequestParam("authorId")
                     Long authorId,
